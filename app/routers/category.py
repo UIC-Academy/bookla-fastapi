@@ -59,3 +59,13 @@ async def delete_category(category_id: int, db: db_dep):
     db.delete(category)
     db.commit()
     return Response(status_code=204)
+
+
+
+
+
+
+
+
+
+    
