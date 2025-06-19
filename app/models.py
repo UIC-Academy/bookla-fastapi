@@ -79,3 +79,5 @@ class BookTagM2M(Base):
 
     book_id: Mapped[int] = mapped_column(Integer, ForeignKey("books.id"), primary_key=True)
     tag_id: Mapped[int] = mapped_column(Integer, ForeignKey("tags.id"), primary_key=True)
+
+
