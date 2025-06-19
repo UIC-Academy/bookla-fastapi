@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers.category import router as category_router
+from app.routers import category, author, publisher, tag 
 
 app = FastAPI(
     title = "Bookla",
@@ -14,4 +14,7 @@ async def root():
     return {"message": "Hello World"}
 
 
-app.include_router(category_router)
+app.include_router(category.router)
+app.include_router(author.router)
+app.include_router(publisher.router)
+app.include_router(tag.router)

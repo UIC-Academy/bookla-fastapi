@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Response
 
-from app.dependencies import db_dep, pagination_dep
-from app.models import Category
-from app.schemas import CategoryCreate, CategoryListResponse
+from app.depends.dependencies import db_dep, pagination_dep
+from app.models.models import Category
+from app.schemas.category import CategoryCreate, CategoryListResponse
 
 
 router = APIRouter(
