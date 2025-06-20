@@ -1,0 +1,69 @@
+from fastapi import APIRouter, HTTPException, Response
+from app.dependencies import db_dep, pagination_dep
+from app.models import Publisher
+from app.schemas import PublisherCreate, PublisherListResponse, PublisherUpdate
+
+router = APIRouter(
+    prefix="/publisher",
+    tags=["publisher"]
+)
+
+@router.get("/list/", response_model=list[PublisherListResponse], status_code=200)
+async def list_publishers(db: db_dep):
+    publishers = db.query(Publisher).all()
+    if not publishers:
+        raise HTTPException(status_code=404, detail="No publishers found")
+    return publishers
+
+@router.get("/{publisher_id}", response_model=PublisherListResponse, status_code=200)
+async def get_publisher(publisher_id: int, db: db_dep):
+    publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
+    if not publisher:
+        raise HTTPException(status_code=404, detail="Publisher not found")
+    return publisher
+
+@router.post("/create/", response_model=PublisherListResponse, status_code=201)
+async def create_publisher(publisher: PublisherCreate, db: db_dep):
+    new_publisher = Publisher(**publisher.model_dump())
+    db.add(new_publisher)
+    db.commit()
+    db.refresh(new_publisher)
+    return new_publisher
+
+@router.patch("/{publisher_id}/update/", response_model=PublisherListResponse, status_code=200)
+async def update_publisher_1(publisher_id: int, publisher: PublisherUpdate, db: db_dep):
+    publisher_obj = db.query(Publisher).filter(Publisher.id == publisher_id).first()
+    if not publisher_obj:
+        raise HTTPException(status_code=404, detail="Publisher not found")
+    
+
+    publisher_obj.name = publisher.name if publisher.name else publisher_obj.name
+    publisher_obj.location_url = publisher.location_url if publisher.location_url else publisher_obj.location_url
+    publisher_obj.website_url = publisher.website_url if publisher.website_url else publisher_obj.website_url
+    db.commit()
+    db.refresh(publisher_obj)
+    return publisher_obj
+
+@router.put("/{publisher_id}/update/", response_model=PublisherListResponse, status_code=200)
+async def update_publisher(publisher_id: int, publisher: PublisherUpdate, db: db_dep):
+    publisher_obj = db.query(Publisher).filter(Publisher.id == publisher_id).first()
+    if not publisher_obj:
+        raise HTTPException(status_code=404, detail="Publisher not found")
+    
+
+    publisher_obj.name = publisher.name
+    publisher_obj.location_url = publisher.location_url
+    publisher_obj.website_url = publisher.website_url
+    db.commit()
+    db.refresh(publisher_obj)
+    return publisher_obj
+
+@router.delete("/{publisher_id}/delete/")
+async def delete_publisher(publisher_id: int, db: db_dep):
+    publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
+    if not publisher:
+        raise HTTPException(status_code=404, detail="Publisher not found")
+
+    db.delete(publisher)
+    db.commit()
+    return Response(status_code=204)
