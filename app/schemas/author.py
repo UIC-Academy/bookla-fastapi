@@ -11,9 +11,9 @@ class AuthorCreate(AuthorBase):
     pass 
 
 class AuthorUpdate(BaseModel):
-    fullname: Optional[str]
-    bio: Optional[str]
-    avatar: Optional[str]
+    name: Optional[str] =None
+    location_url: Optional[str] = None
+    website_url: Optional[str] = None
 
 
 class AuthorResponse(AuthorBase):
