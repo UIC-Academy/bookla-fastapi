@@ -60,21 +60,4 @@ async def delete_publisher(publisher_id: int, db: db_dep):
     db.commit()
     return Response(status_code=204)
 
-@router.patch("/{publisher_id}", response_model=PublisherResponse)
-async def change_publisher(publisher_id: int, request: PublisherUpdate, db: db_dep):
-    publisher_obj = db.query(Publisher).filter(Publisher.id == publisher_id).first()
-
-    if not publisher_obj:
-        raise HTTPException(status_code=404, detail="Publisher not found")
-
-    update_data = request.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(publisher_obj, key, value)
-
-    db.commit()
-    db.refresh(publisher_obj)
-    return publisher_obj
-
-
-
 

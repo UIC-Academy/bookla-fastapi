@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import category, author, publisher, tag 
+from app.routers import category, author, publisher, tag, book 
 
 app = FastAPI(
     title = "Bookla",
@@ -18,3 +18,4 @@ app.include_router(category.router)
 app.include_router(author.router)
 app.include_router(publisher.router)
 app.include_router(tag.router)
+app.include_router(book.router)
