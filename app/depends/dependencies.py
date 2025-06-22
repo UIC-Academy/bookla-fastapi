@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from typing import Annotated
 
-from app.database import SessionLocal
+from app.database.database import SessionLocal
 
 
 async def pagination_depedency(q: str | None = None, offset: int = 0, limit: int = 100):

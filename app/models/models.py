@@ -4,7 +4,7 @@ from sqlalchemy import Integer, String, ForeignKey
 from typing import Optional
 from datetime import datetime, timezone
 
-from app.database import Base
+from app.database.database import Base
 
 
 class Book(Base):
