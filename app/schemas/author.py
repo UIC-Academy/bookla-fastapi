@@ -1,20 +1,19 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class AuthorCreate(BaseModel):
     fullname: str
     bio: Optional[str] = None
     avatar: Optional[str] = None
-    updated_at: Optional[datetime] = datetime.now(timezone.utc)
 
 class AuthorResponse(BaseModel):
     id: int
-    created_at: Optional[datetime] = datetime.now(timezone.utc)
+    created_at: datetime
     fullname: str
     bio: Optional[str] = None
     avatar: Optional[str] = None
-    updated_at: Optional[datetime] = datetime.now(timezone.utc)
+    updated_at: datetime
 
     

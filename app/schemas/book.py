@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime, timezone
+from typing import Optional
+from datetime import datetime
 
 class BookCreate(BaseModel):
     name: str
@@ -11,14 +11,12 @@ class BookCreate(BaseModel):
     author_id: int
     category_id: int
     publisher_id: int
-    rating: float
     is_active: Optional[bool] = True
-    updated_at: Optional[datetime] = datetime.now(timezone.utc)
     
 
 class BookResponse(BaseModel):
     id: int
-    created_at: Optional[datetime] = datetime.now(timezone.utc)
+    created_at: datetime
     name: str
     description: Optional[str] = None
     isbn: str
@@ -29,5 +27,6 @@ class BookResponse(BaseModel):
     publisher_id: int
     rating: float
     is_active: Optional[bool] = True
-    updated_at: Optional[datetime] = datetime.now(timezone.utc)
+    updated_at: datetime
+
 
