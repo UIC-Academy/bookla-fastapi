@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Response
 
 from app.dependencies import db_dep, pagination_dep
 from app.models import Category
-from app.schemas import CategoryCreate, CategoryListResponse
+from app.schemas.category import CategoryCreate, CategoryListResponse
 
 
 router = APIRouter(
@@ -41,7 +41,7 @@ async def create_category(category: CategoryCreate, db: db_dep):
 @router.put("/{category_id}/update/", response_model=CategoryListResponse)
 async def update_category(category_id: int, category: CategoryCreate, db: db_dep):
     category_obj = db.query(Category).filter(Category.id == category_id).first()
-    if not category:
+    if not category_obj:
         raise HTTPException(status_code=404, detail="Category not found")
     
     category_obj.name = category.name
