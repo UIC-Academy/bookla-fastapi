@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=list[PublisherResponse])
-async def list_publishers(db=Depends(db_dep)):
+async def list_publishers(db:db_dep):
     publishers = db.query(Publisher).all()
     if not publishers:
         raise HTTPException(status_code=404, detail="No publishers found")
@@ -18,7 +18,7 @@ async def list_publishers(db=Depends(db_dep)):
     return publishers
 
 @router.get("/{publisher_id}", response_model=PublisherResponse)
-async def get_publisher(publisher_id: int, db=Depends(db_dep)):
+async def get_publisher(publisher_id: int, db:db_dep):
     publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
     if not publisher:
         raise HTTPException(status_code=404, detail="Publisher not found")
@@ -26,7 +26,7 @@ async def get_publisher(publisher_id: int, db=Depends(db_dep)):
     return publisher
 
 @router.post("/create/", response_model=PublisherResponse)  
-async def create_publisher(publisher: PublisherCreate, db=Depends(db_dep)):
+async def create_publisher(publisher: PublisherCreate, db:db_dep):
     new_publisher = Publisher(**publisher.model_dump())
     db.add(new_publisher)
     db.commit()
@@ -34,7 +34,7 @@ async def create_publisher(publisher: PublisherCreate, db=Depends(db_dep)):
     return new_publisher
 
 @router.put("/{publisher_id}/update/", response_model=PublisherResponse)    
-async def update_publisher(publisher_id: int, publisher: PublisherCreate, db=Depends(db_dep)):
+async def update_publisher(publisher_id: int, publisher: PublisherCreate, db:db_dep):
     publisher_obj = db.query(Publisher).filter(Publisher.id == publisher_id).first()
     if not publisher_obj:
         raise HTTPException(status_code=404, detail="Publisher not found")
@@ -45,7 +45,7 @@ async def update_publisher(publisher_id: int, publisher: PublisherCreate, db=Dep
     return publisher_obj
 
 @router.delete("/{publisher_id}/delete/")
-async def delete_publisher(publisher_id: int, db=Depends(db_dep)):
+async def delete_publisher(publisher_id: int, db:db_dep):
     publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
     if not publisher:
         raise HTTPException(status_code=404, detail="Publisher not found")

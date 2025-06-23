@@ -19,7 +19,7 @@ async def list_books(db=Depends(db_dep)):
     return books
 
 @router.get("/{book_id}", response_model=BookResponse)
-async def get_book(book_id: int, db=Depends(db_dep)):
+async def get_book(book_id: int, db:db_dep):
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
@@ -27,7 +27,7 @@ async def get_book(book_id: int, db=Depends(db_dep)):
     return book
 
 @router.post("/create/", response_model=BookResponse)  
-async def create_book(book: BookCreate, db=Depends(db_dep)):
+async def create_book(book: BookCreate, db:db_dep):
     new_book = Book(**book.model_dump())
     db.add(new_book)
     db.commit()
@@ -35,7 +35,7 @@ async def create_book(book: BookCreate, db=Depends(db_dep)):
     return new_book
 
 @router.put("/{book_id}/update/", response_model=BookResponse)    
-async def update_book(book_id: int, book: BookCreate, db=Depends(db_dep)):
+async def update_book(book_id: int, book: BookCreate, db:db_dep):
     book_obj = db.query(Book).filter(Book.id == book_id).first()
     if not book_obj:
         raise HTTPException(status_code=404, detail="Book not found")
@@ -48,7 +48,7 @@ async def update_book(book_id: int, book: BookCreate, db=Depends(db_dep)):
     return book_obj 
 
 @router.delete("/{book_id}/delete/")
-async def delete_book(book_id: int, db=Depends(db_dep)):    
+async def delete_book(book_id: int, db:db_dep):    
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
