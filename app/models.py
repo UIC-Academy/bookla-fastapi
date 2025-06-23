@@ -43,7 +43,7 @@ class Author(Base):
     books: Mapped["Book"] = relationship(back_populates="author")
 
 
-class Publisher(Base):
+class Publisher(Base):  
     __tablename__ = "publishers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
