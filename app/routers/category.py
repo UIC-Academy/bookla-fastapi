@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Response
 
-from app.dependencies import db_dep, pagination_dep
+from app.dependencies import db_dep
 from app.models import Category
 from app.schemas import CategoryCreate, CategoryListResponse
 
