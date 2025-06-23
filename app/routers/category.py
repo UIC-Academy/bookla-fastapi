@@ -48,7 +48,7 @@ async def update_category(category_id: int, category: CategoryCreate, db: db_dep
     db.commit()
     db.refresh(category_obj)
     return category_obj
-
+ 
 
 @router.delete("/{category_id}/delete/")
 async def delete_category(category_id: int, db: db_dep):
