@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
+from datetime import datetime
+
 
 class BookCreate(BaseModel):
     name: str
@@ -20,7 +22,5 @@ class BookListResponse(BaseModel):
     name: str
     description: Optional[str] = None
     isbn: str
-
-
-
-
+    created_at: datetime
+    updated_at: datetime
