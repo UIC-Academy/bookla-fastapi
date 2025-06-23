@@ -29,7 +29,7 @@ class Book(Base):
     publisher: Mapped["Publisher"] = relationship(back_populates="books")
     tags: Mapped[list["Tag"]] = relationship(secondary="book_tag_m2m", back_populates="books")
 
-
+    
 class Author(Base):
     __tablename__ = "authors"
 
