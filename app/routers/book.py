@@ -30,22 +30,16 @@ async def get_book(book_id: int, db: db_dep):
 
 @router.post("/create/", response_model=BookListResponse)
 async def create_book(book: BookCreate, db: db_dep):
-    tag_ids = book.tag_ids or []
-    book_data = book.model_dump(exclude={"tag_ids"})
+    book_data = book.model_dump(exclude={"tags"})
+    tag_ids = book.tags or []
 
-    new_book = Book(**book_data)
+    tags = db.query(Tag).filter(Tag.id.in_(tag_ids)).all()
+
+    new_book = Book(**book_data, tags=tags)
+
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
-
-
-    if tag_ids:
-        for tag_id in tag_ids:
-            tag = db.query(Tag).filter(Tag.id == tag_id).first()
-            if tag:
-                new_book.tags.append(tag)
-        db.commit()
-        db.refresh(new_book)
 
     return new_book
 

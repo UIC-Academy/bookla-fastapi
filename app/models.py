@@ -71,7 +71,7 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
 
-    books: Mapped["Book"] = relationship(secondary="book_tag_m2m", back_populates="tags")
+    books: Mapped[list["Book"]] = relationship(secondary="book_tag_m2m", back_populates="tags")
 
 
 class BookTagM2M(Base):
