@@ -26,8 +26,7 @@ class BookUpdate(BaseModel):
     category_id: Optional[int] = None
     publisher_id: Optional[int] = None
     tags: Optional[List[int]] = None
-    is_active: Optional[bool] = None
-    rating: Optional[float] = None
+
 
 
 class BookResponse(BaseModel):
