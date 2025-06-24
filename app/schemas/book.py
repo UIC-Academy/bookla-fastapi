@@ -13,8 +13,7 @@ class BookCreate(BaseModel):
     author_id: int
     category_id: int
     publisher_id: int
-    rating: float = 0.0
-    tag_ids: List[int] | None = None  
+    tags: List[int] | None = None  
 
 
 class BookListResponse(BaseModel):
