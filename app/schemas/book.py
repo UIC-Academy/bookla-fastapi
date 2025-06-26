@@ -15,7 +15,11 @@ class BookCreate(BaseModel):
     author_id: int
     category_id: int
     publisher_id: int
+<<<<<<< neocode
+    tags: List[int] | None = None  
+=======
     tags: List[int] | None = None
+>>>>>>> main
 
 
 class BookListResponse(BaseModel):
