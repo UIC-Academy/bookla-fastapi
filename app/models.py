@@ -1,8 +1,7 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, ForeignKey
+from datetime import UTC, datetime
 
-from typing import Optional
-from datetime import datetime, timezone
+from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -13,19 +12,20 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100), unique=True)
-
+    username: Mapped[str] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)
+    is_admin: Mapped[bool] = mapped_column(default=False)
     is_deleted: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
 
     user_books: Mapped[list["Book"]] = relationship(
-        secondary="UserBook", back_populates="users"
+        secondary="user_books", back_populates="users"
     )
     comments: Mapped[list["Book"]] = relationship(
-        secondary="Comment", back_populates="comment_owners"
+        secondary="comments", back_populates="comment_owners"
     )
 
     def __str__(self):
@@ -37,18 +37,18 @@ class Book(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
-    description: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    description: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     isbn: Mapped[str] = mapped_column(String(100), unique=True)
-    cover: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    cover: Mapped[str | None] = mapped_column(String(100), nullable=True)
     page_count: Mapped[int]
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey("authors.id"))
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"))
     publisher_id: Mapped[int] = mapped_column(Integer, ForeignKey("publishers.id"))
     rating: Mapped[float] = mapped_column(default=0.0)
     is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
 
     author: Mapped["Author"] = relationship(back_populates="books")
@@ -58,10 +58,10 @@ class Book(Base):
         secondary="book_tag_m2m", back_populates="books"
     )
     users: Mapped[list["User"]] = relationship(
-        secondary="UserBook", back_populates="user_books"
+        secondary="user_books", back_populates="user_books"
     )
     comment_owners: Mapped[list["User"]] = relationship(
-        secondary="Comment", back_populates="comments"
+        secondary="comments", back_populates="comments"
     )
 
     def __str__(self):
@@ -75,7 +75,7 @@ class UserBook(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     book_id: Mapped[int] = mapped_column(Integer, ForeignKey("books.id"))
     current_page: Mapped[int] = mapped_column(default=0)
-    started_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    started_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     finished_at: Mapped[datetime] = mapped_column(nullable=True, default=None)
 
     def __str__(self):
@@ -90,7 +90,7 @@ class Comment(Base):
     book_id: Mapped[int] = mapped_column(Integer, ForeignKey("books.id"))
     text: Mapped[str] = mapped_column(String(1000))
     reply_to: Mapped[int] = mapped_column(ForeignKey("comments.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
 
     def __str__(self):
         return f"Comment(id={self.id}, user_id={self.user_id}, book_id={self.book_id})"
@@ -101,11 +101,11 @@ class Author(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     fullname: Mapped[str] = mapped_column(String(100))
-    bio: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    avatar: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    bio: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    avatar: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
 
     books: Mapped["Book"] = relationship(back_populates="author")
@@ -119,11 +119,11 @@ class Publisher(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
-    location_url: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    website_url: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
+    location_url: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    website_url: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc)
+        default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
 
     books: Mapped["Book"] = relationship(back_populates="publisher")
