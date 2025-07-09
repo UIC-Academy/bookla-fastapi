@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.admin.settings import admin
 from app.routers.auth import router as auth_router
 from app.routers.author import router as author_router
 from app.routers.book import router as book_router
@@ -27,3 +28,5 @@ app.include_router(tag_router)
 app.include_router(book_router)
 app.include_router(auth_router)
 app.include_router(users_router)
+
+admin.mount_to(app=app)
