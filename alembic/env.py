@@ -5,13 +5,17 @@ from sqlalchemy import pool
 
 from alembic import context
 from app.database import Base, DB_URL
+
 from app.models import (
-    Book,
-    Author,
-    Publisher,
-    Category,
-    Tag,
-    BookTagM2M
+    Book,  # noqa
+    User,  # noqa
+    UserBook,  # noqa
+    Comment,  # noqa
+    Author,  # noqa
+    Publisher,  # noqa
+    Category,  # noqa
+    Tag,  # noqa
+    BookTagM2M,  # noqa
 )
 
 # this is the Alembic Config object, which provides
@@ -74,9 +78,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

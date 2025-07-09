@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from sqlalchemy.orm import Session
 
 from app.dependencies import db_dep
-from app.models import Book, Tag, BookTagM2M
+from app.models import Book, Tag
 from app.schemas.book import BookCreate, BookListResponse
 
 router = APIRouter(
@@ -74,7 +73,7 @@ async def delete_book(book_id: int, db: db_dep):
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    
+
     db.delete(book)
     db.commit()
     return {"message": "Book deleted successfully"}

@@ -54,7 +54,7 @@ async def delete_publisher(publisher_id: int, db: db_dep):
     publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
     if not publisher:
         raise HTTPException(status_code=404, detail="Publisher not found")
-    
+
     db.delete(publisher)
     db.commit()
     return {"message": "Publisher deleted successfully"}

@@ -54,7 +54,7 @@ async def delete_tag(tag_id: int, db: db_dep):
     tag = db.query(Tag).filter(Tag.id == tag_id).first()
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
-    
+
     db.delete(tag)
     db.commit()
     return {"message": "Tag deleted successfully"}

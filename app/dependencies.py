@@ -17,5 +17,6 @@ def get_db():
     finally:
         db.close()
 
+
 pagination_dep = Annotated[dict, Depends(pagination_depedency)]
 db_dep = Annotated[Session, Depends(get_db)]
