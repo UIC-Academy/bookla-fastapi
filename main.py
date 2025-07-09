@@ -7,9 +7,9 @@ from app.routers.tag import router as tag_router
 from app.routers.book import router as book_router
 
 app = FastAPI(
-    title = "Bookla",
-    description = "Bookla - is a FastAPI application, built for practicing CRUD and authentication mechanisms in FastAPI",
-    version = "0.0.1"
+    title="Bookla",
+    description="Bookla - is a FastAPI application, built for practicing CRUD and authentication mechanisms in FastAPI",
+    version="0.0.1",
 )
 
 

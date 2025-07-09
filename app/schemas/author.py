@@ -10,6 +10,6 @@ class AuthorCreate(BaseModel):
 
 class AuthorListResponse(BaseModel):
     id: int
-    fullname:str
+    fullname: str
     bio: Optional[str] = None
     avatar: Optional[str] = None

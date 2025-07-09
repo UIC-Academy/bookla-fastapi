@@ -54,7 +54,7 @@ async def delete_author(author_id: int, db: db_dep):
     author = db.query(Author).filter(Author.id == author_id).first()
     if not author:
         raise HTTPException(status_code=404, detail="Author not found")
-    
+
     db.delete(author)
     db.commit()
     return {"message": "Author deleted successfully"}
