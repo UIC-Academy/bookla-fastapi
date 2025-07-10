@@ -4,7 +4,6 @@ from app.dependencies import db_dep
 from app.models import Category
 from app.schemas import CategoryCreate, CategoryListResponse
 
-
 router = APIRouter(prefix="/category", tags=["category"])
 
 

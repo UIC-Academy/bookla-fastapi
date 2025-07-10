@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 
-
 from app.dependencies import db_dep
 from app.models import Book, Tag
 from app.schemas.book import BookCreate, BookListResponse

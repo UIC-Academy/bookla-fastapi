@@ -1,21 +1,19 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from app.database import Base, DB_URL
-
+from app.database import DB_URL, Base
 from app.models import (
+    Author,  # noqa
     Book,  # noqa
+    BookTagM2M,  # noqa
+    Category,  # noqa
+    Comment,  # noqa
+    Publisher,  # noqa
+    Tag,  # noqa
     User,  # noqa
     UserBook,  # noqa
-    Comment,  # noqa
-    Author,  # noqa
-    Publisher,  # noqa
-    Category,  # noqa
-    Tag,  # noqa
-    BookTagM2M,  # noqa
 )
 
 # this is the Alembic Config object, which provides
