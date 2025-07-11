@@ -21,12 +21,8 @@ class User(Base):
         default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
 
-    user_books: Mapped[list["Book"]] = relationship(
-        secondary="user_books", back_populates="users"
-    )
-    comments: Mapped[list["Book"]] = relationship(
-        secondary="comments", back_populates="comment_owners"
-    )
+    user_books: Mapped[list["UserBook"]] = relationship(back_populates="user")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="user")
 
     def __str__(self):
         return f"User(id={self.id}, email={self.email})"
@@ -57,12 +53,8 @@ class Book(Base):
     tags: Mapped[list["Tag"]] = relationship(
         secondary="book_tag_m2m", back_populates="books"
     )
-    users: Mapped[list["User"]] = relationship(
-        secondary="user_books", back_populates="user_books"
-    )
-    comment_owners: Mapped[list["User"]] = relationship(
-        secondary="comments", back_populates="comments"
-    )
+    users: Mapped[list["UserBook"]] = relationship(back_populates="book")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="book")
 
     def __str__(self):
         return f"Book(id={self.id}, name={self.name})"
@@ -78,6 +70,9 @@ class UserBook(Base):
     started_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
     finished_at: Mapped[datetime] = mapped_column(nullable=True, default=None)
 
+    user: Mapped["User"] = relationship(back_populates="user_books")
+    book: Mapped["Book"] = relationship(back_populates="users")
+
     def __str__(self):
         return f"UserBook(id={self.id}, user_id={self.user_id}, book_id={self.book_id})"
 
@@ -91,6 +86,9 @@ class Comment(Base):
     text: Mapped[str] = mapped_column(String(1000))
     reply_to: Mapped[int] = mapped_column(ForeignKey("comments.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now(UTC))
+
+    user: Mapped["User"] = relationship(back_populates="comments")
+    book: Mapped["Book"] = relationship(back_populates="comments")
 
     def __str__(self):
         return f"Comment(id={self.id}, user_id={self.user_id}, book_id={self.book_id})"
