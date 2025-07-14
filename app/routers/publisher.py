@@ -18,7 +18,7 @@ async def list_publisher(db: db_dep):
     return publishers
 
 
-@router.get("/{publisher_id}", response_model=PublisherListResponse)
+@router.get("/{publisher_id}/", response_model=PublisherListResponse)
 async def get_publisher(publisher_id: int, db: db_dep):
     publisher = db.query(Publisher).filter(Publisher.id == publisher_id).first()
     if not publisher:

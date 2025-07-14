@@ -18,7 +18,7 @@ async def list_book(db: db_dep):
     return books
 
 
-@router.get("/{book_id}", response_model=BookListResponse)
+@router.get("/{book_id}/", response_model=BookListResponse)
 async def get_book(book_id: int, db: db_dep):
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:

@@ -1,19 +1,15 @@
-import os
 from datetime import UTC, datetime, timedelta
 
-from dotenv import load_dotenv
 from jose import jwt
 from passlib.context import CryptContext
 
-load_dotenv()
-
+from app.settings import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    ALGORITHM,
+    SECRET_KEY,
+)
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
-ALGORITHM = os.getenv("ALGORITHM")
-SECRET_KEY = os.getenv("SECRET_KEY")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-REFRESH_TOKEN_EXPIRE_MINUTES = int(os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES"))
 
 
 def hash_password(password: str):
@@ -44,3 +40,12 @@ def create_jwt_token(data: dict, expires_delta: float | None = None):
     jwt_token = jwt.encode(data, SECRET_KEY, ALGORITHM)
 
     return jwt_token
+
+
+def generate_confirmation_token(email):
+    """Generate JWT token"""
+    payload = {
+        "email": email,
+        "exp": datetime.now(UTC) + timedelta(hours=1),
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)

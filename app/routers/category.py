@@ -16,7 +16,7 @@ async def list_category(db: db_dep):
     return categories
 
 
-@router.get("/{category_id}", response_model=CategoryListResponse)
+@router.get("/{category_id}/", response_model=CategoryListResponse)
 async def get_category(category_id: int, db: db_dep):
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
