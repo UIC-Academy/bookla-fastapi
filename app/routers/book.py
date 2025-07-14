@@ -1,8 +1,14 @@
-from fastapi import APIRouter, HTTPException
+import os
+import shutil
+from uuid import uuid4
+
+from fastapi import APIRouter, HTTPException, UploadFile
 
 from app.dependencies import db_dep
 from app.models import Book, Tag
 from app.schemas.book import BookCreate, BookListResponse
+from app.settings import MEDIA_PATH, MEDIA_URL
+from app.utils import validate_image
 
 router = APIRouter(
     prefix="/book",
@@ -76,3 +82,22 @@ async def delete_book(book_id: int, db: db_dep):
     db.delete(book)
     db.commit()
     return {"message": "Book deleted successfully"}
+
+
+@router.post("/cover/upload/")
+async def upload_cover(cover: UploadFile):
+    cover: UploadFile = await validate_image(cover)
+
+    file_name_original = os.path.splitext(cover.filename)[0]
+    file_ext = os.path.splitext(cover.filename)[1]
+
+    filename = f"{file_name_original}-{str(uuid4())[0:8]}{file_ext}"
+    file_path = MEDIA_PATH / filename
+
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(cover.file, buffer)
+
+    return {
+        "url": f"{MEDIA_URL}/{filename}",
+        "message": "Cover image uploaded successfully",
+    }

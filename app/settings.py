@@ -1,6 +1,7 @@
 """Main Settings File"""
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -30,3 +31,11 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
 FRONTEND_URL = "localhost:8000"
+
+MEDIA_DIR = "media"
+MEDIA_URL = "/media"
+MEDIA_PATH = Path(MEDIA_DIR)
+MEDIA_PATH.mkdir(exist_ok=True, parents=True)
+
+STATIC_DIR = "static"
+STATIC_URL = "/static"

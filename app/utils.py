@@ -1,5 +1,7 @@
+import os
 from datetime import UTC, datetime, timedelta
 
+from fastapi import HTTPException, UploadFile
 from jose import jwt
 from passlib.context import CryptContext
 
@@ -49,3 +51,22 @@ def generate_confirmation_token(email):
         "exp": datetime.now(UTC) + timedelta(hours=1),
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+# Image Validation
+
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+
+async def validate_image(file: UploadFile):
+    # Check file extension
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    if file_ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(400, "Invalid file type")
+
+    # Check file size
+    if file.size > MAX_FILE_SIZE:
+        raise HTTPException(400, "File too large")
+
+    return file

@@ -32,11 +32,16 @@ class BookAdminView(ModelView):
         "name",
         "description",
         "isbn",
+        "cover",
         "rating",
         "is_active",
         "created_at",
     ]
-    exclude_fields_from_list: ClassVar[list[str]] = ["created_at", "updated_at"]
+    exclude_fields_from_list: ClassVar[list[str]] = [
+        "cover",
+        "created_at",
+        "updated_at",
+    ]
     exclude_fields_from_create: ClassVar[list[str]] = ["created_at", "updated_at"]
     exclude_fields_from_edit: ClassVar[list[str]] = ["created_at", "updated_at"]
     export_fields: ClassVar[list[str]] = [

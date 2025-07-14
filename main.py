@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.admin.settings import admin
 from app.middlewares import ProcessTimeLoggerMiddleware, origins
@@ -10,6 +11,7 @@ from app.routers.category import router as category_router
 from app.routers.publisher import router as publisher_router
 from app.routers.tag import router as tag_router
 from app.routers.user import router as users_router
+from app.settings import MEDIA_DIR, MEDIA_URL
 
 app = FastAPI(
     title="Bookla",
@@ -28,11 +30,6 @@ app.add_middleware(
 app.add_middleware(ProcessTimeLoggerMiddleware)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
 app.include_router(category_router)
 app.include_router(author_router)
 app.include_router(publisher_router)
@@ -42,3 +39,10 @@ app.include_router(auth_router)
 app.include_router(users_router)
 
 admin.mount_to(app=app)
+
+app.mount(MEDIA_URL, StaticFiles(directory=MEDIA_DIR), name=MEDIA_DIR)
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}

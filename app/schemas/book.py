@@ -22,6 +22,7 @@ class BookListResponse(BaseModel):
     name: str
     description: str | None = None
     isbn: str
+    cover: str | None = None
     tags: list[TagListResponse] = None
     created_at: datetime
     updated_at: datetime
