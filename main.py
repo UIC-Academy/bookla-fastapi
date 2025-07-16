@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.admin.settings import admin
+from app.middlewares import ProcessTimeLoggerMiddleware, origins
 from app.routers.auth import router as auth_router
 from app.routers.author import router as author_router
 from app.routers.book import router as book_router
@@ -12,8 +14,18 @@ from app.routers.user import router as users_router
 app = FastAPI(
     title="Bookla",
     description="Bookla - is a FastAPI application, built for practicing CRUD and authentication mechanisms in FastAPI",
-    version="0.0.1",
+    version="0.1.0",
 )
+
+# app.add_middleware(SimplePrintLoggerMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.add_middleware(ProcessTimeLoggerMiddleware)
 
 
 @app.get("/")
