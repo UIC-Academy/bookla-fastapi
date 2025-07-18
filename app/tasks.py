@@ -33,6 +33,7 @@ async def write_notification(email: str, message=""):
 def send_email(to_email: str, subject: str, body: str):
     msg = MIMEText(body)
     msg["Subject"] = subject
+    msg["Body"] = body
     msg["From"] = EMAIL_ADDRESS
     msg["To"] = to_email
 
