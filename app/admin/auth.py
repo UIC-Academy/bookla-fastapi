@@ -73,6 +73,9 @@ class JSONAuthProvider(AuthProvider):
             if user is None or not user.is_admin:
                 return None
 
+            if payload.get("exp") < datetime.now(UTC).timestamp():
+                return None
+
             return user
 
         except jwt.JWTError:
