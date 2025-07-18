@@ -18,7 +18,7 @@ async def list_tag(db: db_dep):
     return tags
 
 
-@router.get("/{tag_id}", response_model=TagListResponse)
+@router.get("/{tag_id}/", response_model=TagListResponse)
 async def get_tag(tag_id: int, db: db_dep):
     tag = db.query(Tag).filter(Tag.id == tag_id).first()
     if not tag:

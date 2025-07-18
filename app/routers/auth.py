@@ -3,13 +3,18 @@ from jose import JWTError, jwt
 
 from app.dependencies import db_dep
 from app.models import User
-from app.schemas import TokenIn, UserOut, UserRegisterIn
-from app.utils import (
+from app.schemas import TokenIn, UserRegisterIn
+from app.settings import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     ALGORITHM,
+    FRONTEND_URL,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     SECRET_KEY,
+)
+from app.tasks import send_email
+from app.utils import (
     create_jwt_token,
+    generate_confirmation_token,
     hash_password,
     verify_password,
 )
@@ -17,7 +22,7 @@ from app.utils import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=UserOut)
+@router.post("/register/")
 async def register_user(db: db_dep, register_data: UserRegisterIn):
     is_user_exists = db.query(User).filter(User.email == register_data.email).first()
 
@@ -31,17 +36,36 @@ async def register_user(db: db_dep, register_data: UserRegisterIn):
             email=register_data.email,
             password=hash_password(register_data.password),
             is_admin=True,
+            is_active=False,  # not confirmed yet
         )
     else:
-        user = User(**register_data.model_dump())
+        user = User(
+            email=register_data.email,
+            password=hash_password(register_data.password),
+            is_admin=False,
+            is_active=False,  # not confirmed yet
+            is_deleted=False,
+        )
 
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+
+    # send confirmation email
+    token = generate_confirmation_token(email=user.email)
+
+    send_email.delay(
+        to_email=user.email,
+        subject="Confirm your registration to Bookla",
+        body=f"You can click the link to confirm your email: {FRONTEND_URL}/auth/confirm/{token}/",
+    )
+
+    return {
+        "detail": f"Confirmation email sent to {user.email}. Please confirm to finalize your registration.",
+    }
 
 
-@router.post("/login")
+@router.post("/login/")
 async def login_user(db: db_dep, login_data: UserRegisterIn):
     user = db.query(User).filter(User.email == login_data.email).first()
 
@@ -64,7 +88,7 @@ async def login_user(db: db_dep, login_data: UserRegisterIn):
     return response
 
 
-@router.post("/refresh")
+@router.post("/refresh/")
 async def get_access_token(db: db_dep, token_data: TokenIn):
     try:
         payload = jwt.decode(
@@ -99,3 +123,29 @@ async def get_access_token(db: db_dep, token_data: TokenIn):
         raise HTTPException(
             status_code=400, detail="Something went wrong. Please try again later."
         ) from err
+
+
+@router.get("/confirm/{token}/")
+async def confirm_email(db: db_dep, token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        email = payload["email"]
+
+        user = db.query(User).filter(User.email == email).first()
+
+        if not user:
+            raise HTTPException(status_code=400, detail="User not found")
+
+        if user.is_active:
+            raise HTTPException(status_code=400, detail="User already confirmed")
+
+        user.is_active = True
+        db.commit()
+        db.refresh(user)
+
+        return {"message": "Email confirmed successfully"}
+
+    except jwt.ExpiredSignatureError as err:
+        raise HTTPException(status_code=400, detail="Token has expired") from err
+    except jwt.InvalidTokenError as err:
+        raise HTTPException(status_code=400, detail="Invalid token") from err

@@ -18,7 +18,7 @@ async def list_author(db: db_dep):
     return authors
 
 
-@router.get("/{author_id}", response_model=AuthorListResponse)
+@router.get("/{author_id}/", response_model=AuthorListResponse)
 async def get_author(author_id: int, db: db_dep):
     author = db.query(Author).filter(Author.id == author_id).first()
     if not author:
